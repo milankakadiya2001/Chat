@@ -4,32 +4,38 @@ import CustomListItem from '../Components/CoustomList';
 import {Avatar} from 'react-native-elements';
 import icons from '../assets/Icons/icons';
 import {auth, db} from '../Firebase';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
+import {StackActions} from '@react-navigation/routers';
 
 const HomeScreen = ({navigation}) => {
-  const [chats, setChats] = useState([])
+  const [chats, setChats] = useState([]);
   const SignOut = () => {
     auth
       .signOut()
       .then(() => {
-        navigation.replace('Login');
+        // navigation.dispatch(StackActions.popToTop());
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Login'}],
+        });
       })
       .catch(error => alert(error.message));
   };
   const EditPress = () => {
-    navigation.replace('Edit');
+    navigation.navigate('Edit');
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection('Chats').onSnapshot((snapshot) =>
-    setChats(
-      snapshot.docs.map((doc) => ({
-        id: doc.id,
-        data: doc.data(),
-      }))
-    ))
+    const unsubscribe = db.collection('chats').onSnapshot(snapshot =>
+      setChats(
+        snapshot.docs.map(doc => ({
+          id: doc.id,
+          data: doc.data(),
+        })),
+      ),
+    );
     return unsubscribe;
-  })
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,7 +65,7 @@ const HomeScreen = ({navigation}) => {
             width: 80,
             marginRight: 5,
           }}>
-          <TouchableOpacity activeOpacity={0.5} onPress={SignOut}>
+          <TouchableOpacity activeOpacity={0.5} onPress={null}>
             <Image source={icons.Camera} style={{height: 25, width: 25}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={EditPress}>
@@ -74,14 +80,28 @@ const HomeScreen = ({navigation}) => {
     navigation.navigate('Chat', {
       id,
       chatName,
-    })
-  }
+    });
+  };
   return (
     <View>
-      <Text style={{fontSize: 18, fontWeight: '700', marginVertical: 10, justifyContent: 'center',textAlign: 'center'}} >Hey { auth?.currentUser?.displayName }</Text>
-      <ScrollView style={{height: '100%'}} >
-        {chats.map(({id, data: { chatName } })=> (
-          <CustomListItem key={id} id={id} chatName={chatName} enterChat={enterChat} />
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: '700',
+          marginVertical: 10,
+          justifyContent: 'center',
+          textAlign: 'center',
+        }}>
+        Hey {auth?.currentUser?.displayName}
+      </Text>
+      <ScrollView style={{height: '100%'}}>
+        {chats.map(({id, data: {chatName}}) => (
+          <CustomListItem
+            key={id}
+            id={id}
+            chatName={chatName}
+            enterChat={enterChat}
+          />
         ))}
       </ScrollView>
     </View>

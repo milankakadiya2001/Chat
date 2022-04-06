@@ -101,17 +101,18 @@ const ChatScreen = ({navigation, route}) => {
     const unsubscribe = db
       .collection('chats')
       .doc(route.params.id)
-      .collection('messages')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot((snapshot) =>
-        setMessages(
-          snapshot.docs.map(doc => ({
-            id: doc.id,
-            data: doc.data(),
-          })),
-        ),
-      );
-      return unsubscribe
+      // .collection('messages')
+      // .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        console.log(snapshot);
+        // setMessages(
+        //   snapshot.docs.map(doc => ({
+        //     id: doc.id,
+        //     data: doc.data(),
+        //   })),
+        // );
+      });
+    return unsubscribe;
   }, [route]);
   return (
     <SafeAreaView style={styles.maincontainer}>
@@ -120,20 +121,19 @@ const ChatScreen = ({navigation, route}) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={90}
         style={styles.container}>
-        <ScrollView style={{paddingTop: 15}} >
-          {messages.map(({id, data}) => 
+        <ScrollView style={{paddingTop: 15}}>
+          {messages.map(({id, data}) =>
             data.email === auth.currentUser.email ? (
-                <View key={id} style={styles.receiver} >
-                  <Avatar/>
-                  <Text style={styles.receivertext} >{data.message} </Text>
-                </View>
-            ) : 
-            (
+              <View key={id} style={styles.receiver}>
+                <Avatar />
+                <Text style={styles.receivertext}>{data.message} </Text>
+              </View>
+            ) : (
               <View style={styles.sender}>
-                  <Avatar/>
-                  <Text style={styles.sendertext} >{data.message} </Text>
-                </View>
-            )
+                <Avatar />
+                <Text style={styles.sendertext}>{data.message} </Text>
+              </View>
+            ),
           )}
           <Text>hello</Text>
         </ScrollView>
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  receiver : {
+  receiver: {
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 20,
@@ -180,26 +180,20 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginBottom: 20,
     maxWidth: '80%',
-    position: 'relative'
-
-
+    position: 'relative',
   },
-receivertext : {
-
-},
-sender : {
-  padding: 15,
-  backgroundColor: '#2C5F2D',
-  borderRadius: 20,
-  alignItems: 'flex-start',
-  marginRight: 20,
-  marginBottom: 20,
-  maxWidth: '80%',
-  position: 'relative'
-},
-sendertext : {
-
-},
+  receivertext: {},
+  sender: {
+    padding: 15,
+    backgroundColor: '#2C5F2D',
+    borderRadius: 20,
+    alignItems: 'flex-start',
+    marginRight: 20,
+    marginBottom: 20,
+    maxWidth: '80%',
+    position: 'relative',
+  },
+  sendertext: {},
   footer: {
     flexDirection: 'row',
     alignItems: 'center',

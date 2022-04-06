@@ -15,7 +15,7 @@ import {db} from '../Firebase';
 const HomeScreen = ({navigation}) => {
   const [input, setInput] = useState('');
   const Backbtn = () => {
-    navigation.navigate('Home');
+    navigation.goBack();
   };
   const EditPress = () => {
     navigation.replace('Edit');
@@ -28,7 +28,7 @@ const HomeScreen = ({navigation}) => {
       headerTitleStyle: {Color: 'black'},
       headerTintColor: 'white',
       headerLeft: () => (
-        <View >
+        <View>
           <TouchableOpacity activeOpacity={0.5} onPress={Backbtn}>
             <Image
               source={icons.Down}
@@ -71,7 +71,6 @@ const HomeScreen = ({navigation}) => {
           />
           <Button
             onPress={createChat}
-            
             activeOpacity={0.5}
             title="Add Friend"
             style={{
